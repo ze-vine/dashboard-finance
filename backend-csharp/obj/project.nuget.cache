@@ -1,11 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "F8achNz4LX4=",
+  "dgSpecHash": "rEv8at8LYn4=",
   "success": true,
   "projectFilePath": "C:\\Users\\José Vine\\Documents\\projetos\\finance-dashboard\\backend-csharp\\backend-csharp.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\José Vine\\.nuget\\packages\\dapper\\2.1.66\\dapper.2.1.66.nupkg.sha512",
     "C:\\Users\\José Vine\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.3\\microsoft.aspnetcore.openapi.10.0.3.nupkg.sha512",
-    "C:\\Users\\José Vine\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512"
+    "C:\\Users\\José Vine\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512",
+    "C:\\Users\\José Vine\\.nuget\\packages\\mysqlconnector\\2.5.0\\mysqlconnector.2.5.0.nupkg.sha512"
   ],
   "logs": []
 }
