@@ -2,7 +2,7 @@ namespace backend_csharp.Models;
 
 public class Usuario
 {
-    public int Id { get; }
+    public int Id { get; init; }
     public string Nome { get; set; } = string.Empty;
     public string Sobrenome { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
