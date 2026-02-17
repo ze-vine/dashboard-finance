@@ -15,11 +15,11 @@ public class UsuarioController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> ListarUsuarios()
+    public async Task<IActionResult> ListarUsuariosAsync()
     {
         try
         {
-            var usuarios = await _repositorio.ListarUsuarios();
+            var usuarios = await _repositorio.ListarUsuariosAsync();
 
             if (!usuarios.Any())
             {

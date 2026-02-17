@@ -3,8 +3,11 @@ using backend_csharp.Repositorios;
 
 var builder = WebApplication.CreateBuilder(args);
 
+Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
 builder.Services.AddControllers();
 
+builder.Services.AddScoped<DbSession>();
 builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
 
 builder.Services.AddEndpointsApiExplorer();
