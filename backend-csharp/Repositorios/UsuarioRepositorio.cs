@@ -7,16 +7,19 @@ namespace backend_csharp.Repositorios;
 
 public class UsuarioRepositorio : IUsuarioRepositorio
 {
-    private readonly string _connectionString;
+    private DbSession _dbSession;
 
-    public UsuarioRepositorio(IConfiguration configuracao)
+    public UsuarioRepositorio(DbSession dbSession)
     {
-        _connectionString = configuracao.GetConnectionString("DefaultConnection")!;
+        _dbSession = dbSession;
     }
 
-    public async Task<IEnumerable<Usuario>> ListarTodos()
+    public async Task<IEnumerable<Usuario>> ListarUsuarios()
     {
-        using var connection = new MySqlConnection(_connectionString);
-        return await connection.QueryAsync<Usuario>("SELECT id, nome, sobrenome, email, senha, logradouro, numero_do_logradouro AS NumeroDoLogradouro, cidade, estado, cep, telefone_principal AS TelefonePrincipal, telefone_secundario AS TelefoneSecundario FROM usuarios");
+        string sql = "SELECT * FROM usuarios";
+        using (var connection = _dbSession._connection)
+        {
+            return await connection.QueryAsync<Usuario>(sql: sql);
+        }
     }
 }
