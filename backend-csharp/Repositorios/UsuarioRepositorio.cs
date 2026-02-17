@@ -14,7 +14,7 @@ public class UsuarioRepositorio : IUsuarioRepositorio
         _dbSession = dbSession;
     }
 
-    public async Task<IEnumerable<Usuario>> ListarUsuarios()
+    public async Task<IEnumerable<Usuario>> ListarUsuariosAsync()
     {
         string sql = "SELECT * FROM usuarios";
         using (var connection = _dbSession._connection)
