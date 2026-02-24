@@ -28,7 +28,7 @@ public class UsuarioRepositorio : IUsuarioRepositorio
         }
     }
 
-    public async Task<Usuario> obterUsuarioAsync(int id)
+    public async Task<Usuario> ObterUsuarioAsync(int id)
     {
         string sql = "SELECT * FROM usuarios WHERE id = @Id";
         using (var connection = _dbSession._connection)
@@ -50,6 +50,29 @@ public class UsuarioRepositorio : IUsuarioRepositorio
         using (var conneciton = _dbSession._connection)
         {
             return await conneciton.ExecuteScalarAsync<int>(sql, usuario);
+        }
+    }
+
+    public async Task<bool> AtualizarUsuarioAsync(Usuario usuario)
+    {
+        string nomeDaTabela = "usuarios";
+        string sql = $@"UPDATE {nomeDaTabela} SET 
+        nome = @Nome,
+        sobrenome = @Sobrenome,
+        email = @Email,
+        logradouro = @Logradouro,
+        numero_do_logradouro = @NumeroDoLogradouro,
+        cidade = @Cidade,
+        estado = @Estado,
+        cep = @Cep,
+        telefone_principal = @TelefonePrincipal,
+        telefone_secundario = @TelefoneSecundario
+        WHERE id = @Id";
+
+        using (var connection = _dbSession._connection)
+        {
+            var linhasAfetadas = await connection.ExecuteAsync(sql, usuario);
+            return linhasAfetadas > 0;
         }
     }
 

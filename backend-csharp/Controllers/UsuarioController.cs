@@ -35,16 +35,16 @@ public class UsuarioController : ControllerBase
             return Ok(usuarios);
         } catch (Exception ex)
         {
-            return StatusCode(500, "Ocorreu um erro inesperado");
+            return StatusCode(500, ex.Message);
         }
     }
 
     [HttpGet("{id}", Name = "ObterUsuario")]
-    public async Task<IActionResult> obterUsuarioAsync(int id)
+    public async Task<IActionResult> ObterUsuarioAsync(int id)
     {
         try
         {
-            var usuario = await _repositorio.obterUsuarioAsync(id);
+            var usuario = await _repositorio.ObterUsuarioAsync(id);
 
             if (usuario == null)
             {
@@ -56,7 +56,7 @@ public class UsuarioController : ControllerBase
             return Ok(usuario);
         } catch (Exception ex)
         {
-            return StatusCode(500, "Ocorreu um erro inesperado");
+            return StatusCode(500, ex.Message);
         }
     }
 
@@ -86,6 +86,36 @@ public class UsuarioController : ControllerBase
             return StatusCode(500, ex.Message);
         }
 
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> AtualizarUsuarioAsync(int id, [FromBody] Usuario usuario)
+    {
+        try
+        {
+            if (id != usuario.Id)
+            {
+                return BadRequest("Erro! O ID da URL da requisição é diferente do ID do usuário!");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            bool sucesso = await _repositorio.AtualizarUsuarioAsync(usuario);
+
+            if (!sucesso)
+            {
+                return NotFound("Usuário não encontrado!");
+            }
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
 
