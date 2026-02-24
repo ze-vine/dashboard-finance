@@ -35,7 +35,8 @@ public class UsuarioController : ControllerBase
             return Ok(usuarios);
         } catch (Exception ex)
         {
-            return StatusCode(500, ex.Message);
+            Console.WriteLine(ex.Message);
+            return StatusCode(500, "Ocorreu um erro inesperado!");
         }
     }
 
@@ -56,7 +57,8 @@ public class UsuarioController : ControllerBase
             return Ok(usuario);
         } catch (Exception ex)
         {
-            return StatusCode(500, ex.Message);
+            Console.WriteLine(ex.Message);
+            return StatusCode(500, "Ocorreu um erro inesperado!");
         }
     }
 
@@ -83,7 +85,8 @@ public class UsuarioController : ControllerBase
             return CreatedAtRoute("ObterUsuario", new { id = idDoUsuario }, usuario);
         } catch (Exception ex)
         {
-            return StatusCode(500, ex.Message);
+            Console.WriteLine(ex.Message);
+            return StatusCode(500, "Ocorreu um erro inesperado!");
         }
 
     }
@@ -114,9 +117,30 @@ public class UsuarioController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ex.Message);
+            Console.WriteLine(ex.Message);
+            return StatusCode(500, "Ocorreu um erro inesperado!");
         }
     }
 
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> ExcluirUsuarioAsync(int id)
+    {
+        try
+        {
+            bool sucesso = await _repositorio.ExcluirUsuarioAsync(id);
+
+            if (!sucesso)
+            {
+                return NotFound("Usuário não encontrado para exclusão!");
+            }
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return StatusCode(500, "Ocorreu um erro inesperado!");
+        }
+    }
 
 }

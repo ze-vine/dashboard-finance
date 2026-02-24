@@ -8,4 +8,5 @@ public interface IUsuarioRepositorio
     public Task<int> AdicionarUsuarioAsync(Usuario usuario);
     public Task<Usuario> ObterUsuarioAsync(int id);
     public Task<bool> AtualizarUsuarioAsync(Usuario usuario);
+    public Task<bool> ExcluirUsuarioAsync(int id);
 }
