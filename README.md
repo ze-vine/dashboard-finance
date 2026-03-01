@@ -18,4 +18,4 @@ Está é uma API REST para gestão de finanças pessoais. Ela permite que o usu�
 
 Abaixo está o diagrama conceitual do banco de dados. Criei as devidas entidades e relacionamentos, além de algumas especializações para garantir maior integridade dos dados.
 
-![Diagrama Conceitual](docs/finance-dashboard.drawio.png)
+![Diagrama Conceitual](docs/der-finance-dashboard.png)
