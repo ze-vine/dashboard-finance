@@ -66,10 +66,10 @@ CREATE TABLE lancamentos (
     CONSTRAINT fk_lancamentos_categorias FOREIGN KEY (id_categoria) REFERENCES categorias(id),
     CONSTRAINT chk_lancamentos
     CHECK 
-    (eh_entrada = TRUE AND id_conta_destino IS NULL)
+    ((eh_entrada = TRUE AND id_conta_destino IS NULL)
     OR 
-    (eh_entrada = FALSE AND (id_conta_destino IS NULL OR id_conta_destino <> id_conta_origem))
-);
+    (eh_entrada = FALSE AND (id_conta_destino IS NULL OR id_conta_destino <> id_conta_origem)))
+    );
 
 DELIMITER //
 
