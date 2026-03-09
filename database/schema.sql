@@ -2,57 +2,112 @@ CREATE DATABASE finance_dashboard;
 USE finance_dashboard;
 
 CREATE TABLE usuarios (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
-    sobrenome VARCHAR(100) NOT NULL,
-    email VARCHAR(150) UNIQUE NOT NULL,
+    sobrenome VARCHAR(150) NOT NULL,
+    cpf CHAR(11) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
     senha VARCHAR(255) NOT NULL,
-    logradouro VARCHAR(255),
-    numero_do_logradouro VARCHAR(20),
-    cidade VARCHAR(100),
-    estado VARCHAR(2),
-    cep VARCHAR(10),
-    telefone_principal VARCHAR(20),
-    telefone_secundario VARCHAR(20)
+    logradouro VARCHAR(255) NOT NULL,
+    numero_do_logradouro VARCHAR(20) NOT NULL,
+    cidade VARCHAR(150) NOT NULL,
+    estado CHAR(2) NOT NULL,
+    cep CHAR(8) NOT NULL,
+    telefone_principal VARCHAR(20) NOT NULL,
+    telefone_secundario VARCHAR(20) NOT NULL,
+    CONSTRAINT pk_usuarios
+    PRIMARY KEY(id)
 );
 
 CREATE TABLE categorias (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) UNIQUE NOT NULL
+    id INT AUTO_INCREMENT,
+    id_usuario INT NOT NULL,
+    nome VARCHAR(150) NOT NULL,
+    CONSTRAINT pk_categorias
+    PRIMARY KEY(id),
+    CONSTRAINT uk_categorias_usuarios
+    UNIQUE (id_usuario, nome),
+    CONSTRAINT fk_categorias_usuarios
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
 );
 
 CREATE TABLE contas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) UNIQUE NOT NULL,
+    id INT AUTO_INCREMENT,
+    nome VARCHAR(100) NOT NULL,
     saldo DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     id_usuario INT NOT NULL,
-    CONSTRAINT fk_contas_usuarios FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+    CONSTRAINT pk_contas
+    PRIMARY KEY(id),
+    CONSTRAINT fk_contas_usuarios 
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
+    CONSTRAINT uk_contas_usuarios
+    UNIQUE (id_usuario, nome)
 );
 
 CREATE TABLE lancamentos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    descricao VARCHAR(255),
+    id INT AUTO_INCREMENT,
+    descricao VARCHAR(150),
     valor DECIMAL(10, 2) NOT NULL,
-    data_de_lancamento TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    id_conta INT NOT NULL,
-    id_categoria INT,
-    CONSTRAINT fk_lancamentos_contas FOREIGN KEY (id_conta) REFERENCES contas(id),
-    CONSTRAINT fk_lancamentos_categorias FOREIGN KEY (id_categoria) REFERENCES categorias(id)
+    data_de_lancamento DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id_conta_origem INT NOT NULL,
+    id_conta_destino INT,
+    id_categoria INT NOT NULL,
+    eh_entrada BOOLEAN NOT NULL,
+    CONSTRAINT pk_lancamentos
+    PRIMARY KEY(id),
+    CONSTRAINT fk_lancamentos_contas_origem 
+    FOREIGN KEY (id_conta_origem) REFERENCES contas(id),
+    CONSTRAINT fk_lancamentos_contas_destino
+    FOREIGN KEY (id_conta_destino) REFERENCES contas(id),
+    CONSTRAINT fk_lancamentos_categorias FOREIGN KEY (id_categoria) REFERENCES categorias(id),
+    CONSTRAINT chk_lancamentos
+    CHECK 
+    (eh_entrada = TRUE AND id_conta_destino IS NULL)
+    OR 
+    (eh_entrada = FALSE AND (id_conta_destino IS NULL OR id_conta_destino <> id_conta_origem))
 );
 
-CREATE TABLE entradas (
-    id INT PRIMARY KEY,
-    CONSTRAINT fk_entradas_lancamentos FOREIGN KEY (id) REFERENCES lancamentos(id) ON DELETE CASCADE
-);
+DELIMITER //
 
-CREATE TABLE saidas (
-    id INT PRIMARY KEY,
-    CONSTRAINT fk_saidas_lancamentos FOREIGN KEY (id) REFERENCES lancamentos(id) ON DELETE CASCADE
-);
+CREATE PROCEDURE inserirLancamento
+(
+arg_descricao VARCHAR(150),
+arg_valor DECIMAL(10, 2),
+arg_conta_origem INT,
+arg_conta_destino INT,
+arg_categoria INT,
+arg_eh_entrada BOOLEAN
+)
+BEGIN
+IF (arg_conta_destino IS NOT NULL) THEN
+IF (SELECT id_usuario FROM contas WHERE id = arg_conta_origem) <> 
+   (SELECT id_usuario FROM contas WHERE id = arg_conta_destino) THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'As contas pertencem a usuários diferentes!';
+END IF;
+END IF;
+START TRANSACTION;
+INSERT INTO lancamentos(descricao, valor, id_conta_origem, id_conta_destino, id_categoria, eh_entrada)
+VALUES 
+(arg_descricao, arg_valor, arg_conta_origem, arg_conta_destino, arg_categoria, arg_eh_entrada);
+IF (arg_conta_destino IS NOT NULL) THEN
+UPDATE contas
+SET saldo = saldo - arg_valor
+WHERE id = arg_conta_origem;
+UPDATE contas
+SET saldo = saldo + arg_valor
+WHERE id = arg_conta_destino;
+ELSE 
+IF (arg_eh_entrada = FALSE) THEN
+UPDATE contas
+SET saldo = saldo - arg_valor
+WHERE id = arg_conta_origem;
+ELSE
+UPDATE contas
+SET saldo = saldo + arg_valor
+WHERE id = arg_conta_origem;
+END IF;
+END IF;
+COMMIT;
+END //
 
-CREATE TABLE transferencias (
-    id INT PRIMARY KEY,
-    id_conta_destino INT NOT NULL,
-    CONSTRAINT fk_transferencias_saidas FOREIGN KEY (id) REFERENCES saidas(id) ON DELETE CASCADE,
-    CONSTRAINT fk_transferencias_destino FOREIGN KEY (id_conta_destino) REFERENCES contas(id)
-);
+DELIMITER ;
