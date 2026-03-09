@@ -1,21 +1,22 @@
 using System.Data;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 namespace backend_csharp.Repositorios;
 
 public class DbSession : IDisposable
 {
-
-    public IDbConnection _connection { get; }
+    public IDbConnection Connection { get; }
 
     public DbSession(IConfiguration configuration)
     {
-        _connection = new MySqlConnection(configuration.GetConnectionString("DefaultConnection"));
-        _connection.Open();
+        Connection = new MySqlConnection(configuration.GetConnectionString("DefaultConnection"));
     }
 
     public void Dispose()
     {
-        _connection.Dispose();
+        if (Connection != null && Connection.State != ConnectionState.Closed)
+        {
+            Connection.Dispose();
+        }
     }
 }
