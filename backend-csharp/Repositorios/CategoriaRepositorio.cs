@@ -22,6 +22,18 @@ public class CategoriaRepositorio : ICategoriaRepositorio
     return await _dbSession.Connection.QueryAsync<Categoria>(sql, new { IdUsuario = idUsuario });
   }
 
+  public async Task<Categoria> BuscarUmaCategoria(int idUsuario, int idDaCategoria)
+  {
+    string sql = @"SELECT id AS Id, nome AS Nome, ativo AS Ativo FROM categorias
+    WHERE id = @Id AND id_usuario = @IdUsuario";
+
+    return await _dbSession.Connection.QuerySingleAsync<Categoria>(sql, new
+    {
+      Id = idDaCategoria,
+      IdUsuario = idUsuario
+    });
+  }
+
   public async Task<Categoria> CriarUmaCategoria(Categoria categoriaModel)
   {
     string sql = @"INSERT INTO categorias(nome, id_usuario) VALUES (@Nome, @IdUsuario);

@@ -7,4 +7,5 @@ public interface ICategoriaRepositorio
 {
     public Task<IEnumerable<Categoria>> ListarCategoriasDoUsuario(int idUsuario);
     public Task<Categoria> CriarUmaCategoria(Categoria categoriaModel);
+    public Task<Categoria> BuscarUmaCategoria(int idUsuario, int idDaCategoria);
 }

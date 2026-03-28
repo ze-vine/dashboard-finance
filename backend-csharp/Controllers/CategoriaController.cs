@@ -58,6 +58,37 @@ public class CategoriaController : ControllerBase
     
   }
 
+  [HttpGet("{id}")]
+  public async Task<IActionResult> BuscarUmaCategoria(int id)
+  {
+    try
+    {
+      var categoria = await _repositorio.BuscarUmaCategoria(idMock, id);
+
+      if (categoria == null)
+      {
+        return NotFound(new { mensagem = "Esta categoria não foi encontrada!" });
+      }
+
+      return Ok(new CategoriaListagemDTO
+      {
+        Id = categoria.Id,
+        Nome = categoria.Nome,
+        Ativo = categoria.Ativo
+      }); 
+    } 
+    catch (InvalidOperationException e)
+    {
+      Console.WriteLine(e.Message);
+      return NotFound(new { mensagem = "Nenhuma categoria foi encontrada!" });
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine(e.Message);
+      return StatusCode(500, "Ocorreu um erro inesperado!");
+    }
+  }
+
   [HttpPost]
   public async Task<IActionResult> CriarUmaCategoria(CategoriaCriacaoDTO categoriaDTO)
   {
@@ -72,12 +103,21 @@ public class CategoriaController : ControllerBase
       };
 
       var novaCategoria = await _repositorio.CriarUmaCategoria(categoriaModel);
-
+/*
       return Ok(new CategoriaResponseCriacaoDTO
       {
         Id = novaCategoria.Id,
         Nome = novaCategoria.Nome
       });
+*/
+      CategoriaListagemDTO categoriaDeListagem = new CategoriaListagemDTO
+      {
+        Id = novaCategoria.Id,
+        Nome = novaCategoria.Nome,
+        Ativo = novaCategoria.Ativo
+      };
+
+      return Created($"/api/categorias/{categoriaDeListagem.Id}", categoriaDeListagem);
 
     } catch (MySqlException e) when (e.Number == 1062)
     {
