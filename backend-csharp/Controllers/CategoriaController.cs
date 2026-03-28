@@ -103,13 +103,7 @@ public class CategoriaController : ControllerBase
       };
 
       var novaCategoria = await _repositorio.CriarUmaCategoria(categoriaModel);
-/*
-      return Ok(new CategoriaResponseCriacaoDTO
-      {
-        Id = novaCategoria.Id,
-        Nome = novaCategoria.Nome
-      });
-*/
+
       CategoriaListagemDTO categoriaDeListagem = new CategoriaListagemDTO
       {
         Id = novaCategoria.Id,
