@@ -1,5 +1,5 @@
+using backend_csharp.DTO;
 using backend_csharp.Interfaces;
-using backend_csharp.Models;
 using Microsoft.AspNetCore.Mvc; 
 
 namespace backend_csharp.Controllers;
@@ -10,27 +10,47 @@ public class CategoriaController : ControllerBase
 {
   
   private readonly ICategoriaRepositorio _repositorio;
+
+  /* Essa variável simula o id de um usuário do sistema para fins de teste. Posteriormente,
+  implementarei com o JWT.
+  */
+  private int idMock = 1;
   
   public CategoriaController(ICategoriaRepositorio repositorio)
   {
     _repositorio = repositorio;
   }
   
-  [HttpGet("{idUsuario}")]
-  public async Task<IActionResult> ListarCategoriasDoUsuario(int idUsuario)
+  [HttpGet]
+  public async Task<IActionResult> ListarCategoriasDoUsuario()
   {
     try
     {
-      var categorias = await _repositorio.ListarCategoriasDoUsuario(idUsuario);
+      var categoriasModel = await _repositorio.ListarCategoriasDoUsuario(idMock);
       
-      if (categorias == null || !categorias.Any())
+      if (categoriasModel == null || !categoriasModel.Any())
       {
-        return NotFound("Nenhuma categoria foi cadastrada até o momento para esse usuário!");
+        return Ok(new { 
+          dados = Array.Empty<CategoriaListagemDTO>(), 
+          mensagem = "Nenhuma categoria foi cadastrada para esse usuário!"
+        });
       }
       
-      return Ok(categorias);
+      var categoriasDTO = categoriasModel.Select(c => new CategoriaListagemDTO
+      {
+        Id = c.Id,
+        Nome = c.Nome,
+        Ativo = c.Ativo
+      });
+
+      return Ok(new { 
+        dados = categoriasDTO, 
+        mensagem = "Categorias retornadas com sucesso!"
+      });
+
     } catch (Exception e)
     {
+      Console.WriteLine(e.Message);
       return StatusCode(500, "Ocorreu um erro inesperado!");
     }
     
