@@ -132,5 +132,58 @@ public class CategoriaController : ControllerBase
 
     }
   }
+
+  [HttpPut("{id}")]
+  public async Task<IActionResult> AtualizarUmaCategoria(int id, CategoriaAtualizacaoDTO categoriaDTO)
+  {
+    try
+    {
+      var categoria = await _repositorio.BuscarUmaCategoria(idMock, id);
+
+      if (categoria == null)
+      {
+        return NotFound(new { mensagem = "A categoria não foi encontrada!" });
+      }
+
+      if (!categoria.Ativo)
+      {
+        return BadRequest(new { mensagem = "Esta categoria precisa estar ativa para atualização!" });
+      }
+
+      categoria.Nome = categoriaDTO.Nome;
+      categoria.IdUsuario = idMock;
+
+      if (!await _repositorio.AtualizarUmaCategoria(categoria))
+      {
+        return BadRequest(new { mensagem = "Não foi possível atualizar esta categoria!"});
+      }
+
+      CategoriaListagemDTO categoriaResponse = new CategoriaListagemDTO
+      {
+        Id = categoria.Id,
+        Nome = categoria.Nome,
+        Ativo = categoria.Ativo
+      };
+
+      return Ok(new
+      {
+        dados = categoriaResponse,
+        mensagem = "Categoria atualizada com sucesso!"
+      });
+    } 
+    catch (MySqlException e) when (e.Number == 1062)
+    {
+      return Conflict(new { mensagem = "Erro! Já existe uma categoria com o nome informado!" });
+    }
+    catch (InvalidOperationException e)
+    {
+      return NotFound(new { mensagem = "Não foi possível atualizar, pois esta categoria não foi encontrada!" });
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine(e.Message);
+      return StatusCode(500, "Ocorreu um erro inesperado!");
+    }
+  }
   
 }

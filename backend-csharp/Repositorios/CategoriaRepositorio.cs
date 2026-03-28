@@ -45,6 +45,14 @@ public class CategoriaRepositorio : ICategoriaRepositorio
 
     return categoriaModel;
   }
+
+  public async Task<bool> AtualizarUmaCategoria(Categoria categoriaModel)
+  {
+    string sql = @"UPDATE categorias SET nome = @Nome, ativo = @Ativo 
+    WHERE id = @Id AND id_usuario = @IdUsuario";
+
+    return await _dbSession.Connection.ExecuteAsync(sql, categoriaModel) > 0;
+  }
   
 }
 
