@@ -1,6 +1,8 @@
 using backend_csharp.DTO;
 using backend_csharp.Interfaces;
-using Microsoft.AspNetCore.Mvc; 
+using backend_csharp.Models;
+using Microsoft.AspNetCore.Mvc;
+using MySqlConnector;
 
 namespace backend_csharp.Controllers;
 
@@ -54,6 +56,41 @@ public class CategoriaController : ControllerBase
       return StatusCode(500, "Ocorreu um erro inesperado!");
     }
     
+  }
+
+  [HttpPost]
+  public async Task<IActionResult> CriarUmaCategoria(CategoriaCriacaoDTO categoriaDTO)
+  {
+    try
+    {
+
+      Categoria categoriaModel = new Categoria
+      {
+        Nome = categoriaDTO.Nome,
+        Ativo = true,
+        IdUsuario = idMock
+      };
+
+      var novaCategoria = await _repositorio.CriarUmaCategoria(categoriaModel);
+
+      return Ok(new CategoriaResponseCriacaoDTO
+      {
+        Id = novaCategoria.Id,
+        Nome = novaCategoria.Nome
+      });
+
+    } catch (MySqlException e) when (e.Number == 1062)
+    {
+
+      return Conflict(new { mensagem = "Erro! Já existe uma categoria com o nome informado!" });
+
+    } catch(Exception e)
+    {
+
+      Console.WriteLine(e.Message);
+      return StatusCode(500, "Ocorreu um erro inesperado!");
+
+    }
   }
   
 }

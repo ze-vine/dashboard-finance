@@ -1,3 +1,4 @@
+using backend_csharp.DTO;
 using backend_csharp.Models;
 
 namespace backend_csharp.Interfaces;
@@ -5,4 +6,5 @@ namespace backend_csharp.Interfaces;
 public interface ICategoriaRepositorio
 {
     public Task<IEnumerable<Categoria>> ListarCategoriasDoUsuario(int idUsuario);
+    public Task<Categoria> CriarUmaCategoria(Categoria categoriaModel);
 }

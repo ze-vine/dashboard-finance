@@ -21,6 +21,18 @@ public class CategoriaRepositorio : ICategoriaRepositorio
     
     return await _dbSession.Connection.QueryAsync<Categoria>(sql, new { IdUsuario = idUsuario });
   }
+
+  public async Task<Categoria> CriarUmaCategoria(Categoria categoriaModel)
+  {
+    string sql = @"INSERT INTO categorias(nome, id_usuario) VALUES (@Nome, @IdUsuario);
+    SELECT LAST_INSERT_ID();";
+  
+    int idGerado = await _dbSession.Connection.ExecuteScalarAsync<int>(sql, categoriaModel);
+
+    categoriaModel.Id = idGerado;
+
+    return categoriaModel;
+  }
   
 }
 
