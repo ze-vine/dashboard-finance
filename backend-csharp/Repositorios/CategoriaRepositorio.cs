@@ -48,7 +48,7 @@ public class CategoriaRepositorio : ICategoriaRepositorio
 
   public async Task<bool> AtualizarUmaCategoria(Categoria categoriaModel)
   {
-    string sql = @"UPDATE categorias SET nome = @Nome, ativo = @Ativo 
+    string sql = @"UPDATE categorias SET nome = @Nome 
     WHERE id = @Id AND id_usuario = @IdUsuario";
 
     return await _dbSession.Connection.ExecuteAsync(sql, categoriaModel) > 0;
