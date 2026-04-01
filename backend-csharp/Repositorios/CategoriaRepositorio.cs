@@ -27,7 +27,7 @@ public class CategoriaRepositorio : ICategoriaRepositorio
     string sql = @"SELECT id AS Id, nome AS Nome, ativo AS Ativo FROM categorias
     WHERE id = @Id AND id_usuario = @IdUsuario";
 
-    return await _dbSession.Connection.QuerySingleAsync<Categoria>(sql, new
+    return await _dbSession.Connection.QueryFirstOrDefaultAsync<Categoria>(sql, new
     {
       Id = idDaCategoria,
       IdUsuario = idUsuario
@@ -52,6 +52,13 @@ public class CategoriaRepositorio : ICategoriaRepositorio
     WHERE id = @Id AND id_usuario = @IdUsuario";
 
     return await _dbSession.Connection.ExecuteAsync(sql, categoriaModel) > 0;
+  }
+
+  public async Task<bool> DesativarUmaCategoria(int idDaCategoria, int idUsuario)
+  {
+    string sql = "UPDATE categorias SET ativo = FALSE WHERE id = @Id AND id_usuario = @IdUsuario";
+
+    return await _dbSession.Connection.ExecuteAsync(sql, new { Id = idDaCategoria, IdUsuario = idUsuario }) > 0;
   }
   
 }

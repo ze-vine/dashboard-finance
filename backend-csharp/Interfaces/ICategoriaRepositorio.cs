@@ -9,4 +9,5 @@ public interface ICategoriaRepositorio
     public Task<Categoria> CriarUmaCategoria(Categoria categoriaModel);
     public Task<Categoria> BuscarUmaCategoria(int idUsuario, int idDaCategoria);
     public Task<bool> AtualizarUmaCategoria(Categoria categoriaModel);
+    public Task<bool> DesativarUmaCategoria(int idDaCategoria, int idUsuario);
 }

@@ -171,6 +171,7 @@ public class CategoriaController : ControllerBase
     }
     catch (InvalidOperationException e)
     {
+      Console.WriteLine(e.Message);
       return NotFound(new { mensagem = "Não foi possível atualizar, pois esta categoria não foi encontrada!" });
     }
     catch (Exception e)
@@ -180,4 +181,38 @@ public class CategoriaController : ControllerBase
     }
   }
   
+  [HttpPatch("{id}")]
+  public async Task<IActionResult> ExcluirUmaCategoria(int id)
+  {
+    var categoria = await _repositorio.BuscarUmaCategoria(idMock, id);
+
+    if (categoria == null)
+    {
+      return NotFound(new { mensagem = "Essa categoria não pode ser excluída, pois ela não existe!" });
+    }
+
+    if (!categoria.Ativo)
+    {
+      return BadRequest(new { mensagem = "Essa categoria já foi excluída!" });
+    }
+
+    if (!await _repositorio.DesativarUmaCategoria(id, idMock))
+    {
+      return BadRequest(new { mensagem = "Não foi possível excluir esta categoria!" });
+    }
+
+    CategoriaListagemDTO categoriaDTO = new CategoriaListagemDTO
+    {
+      Id = categoria.Id,
+      Nome = categoria.Nome,
+      Ativo = categoria.Ativo
+    };
+
+    return Ok(new
+    {
+      dados = categoriaDTO,
+      mensagem = "Categoria desativada com sucesso!"
+    });
+  }
+
 }
