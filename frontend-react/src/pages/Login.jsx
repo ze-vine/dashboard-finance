@@ -18,7 +18,7 @@ function Login() {
                     <div className="flex items-center justify-between">
                         <label for="password" className="block text-sm/6 font-medium">Senha</label>
                         <div className="text-sm">
-                            <a href="#" className="font-semibold text-indigo-400 hover:text-indigo-300">Esqueceu sua senha?</a>
+                            <a href="#" className="font-semibold text-green-500 hover:text-green-600">Esqueceu sua senha?</a>
                         </div>
                     </div>
                     <div className="mt-2">
@@ -27,7 +27,7 @@ function Login() {
                 </div>
 
                 <div>
-                    <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Entrar</button>
+                    <button type="submit" className="flex w-full justify-center rounded-md bg-green-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-green-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Entrar</button>
                 </div>
                 </form>
             </div>
